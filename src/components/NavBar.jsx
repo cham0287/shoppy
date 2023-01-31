@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiShoppingBag } from 'react-icons/fi';
 import { BsFillPencilFill } from 'react-icons/bs';
-
+import { login } from '../api/firebase';
 const NavBar = () => {
   return (
     <header className='flex justify-between p-2 border-b border-gray-300'>
@@ -16,7 +16,7 @@ const NavBar = () => {
         <Link to='/products/new'>
           <BsFillPencilFill className='text-2xl' />
         </Link>
-        <button>Login</button>
+        <button onClick={login}>Login</button>
       </nav>
     </header>
   );
