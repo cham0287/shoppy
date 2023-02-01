@@ -1,5 +1,11 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import {
+  getAuth,
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged,
+  GoogleAuthProvider,
+} from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -12,12 +18,19 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
-
+provider.setCustomParameters({
+  prompt: 'select_account',
+});
 export const login = () => {
-  signInWithPopup(auth, provider)
-    .then((result) => {
-      const user = result.user;
-      console.log(user);
-    })
-    .catch(console.error);
+  return signInWithPopup(auth, provider).catch(console.error);
+};
+
+export const logout = () => {
+  return signOut(auth);
+};
+
+export const onUserStateChanged = (callback) => {
+  onAuthStateChanged(auth, (user) => {
+    callback(user);
+  });
 };
