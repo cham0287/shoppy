@@ -10,10 +10,9 @@ import { getDatabase, ref, child, get } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: 'shoppy-bc774.firebaseapp.com',
-  databaseURL:
-    'https://shoppy-bc774-default-rtdb.asia-southeast1.firebasedatabase.app',
-  projectId: 'shoppy-bc774',
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_FIREBASE_DB_URL,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
@@ -25,11 +24,11 @@ provider.setCustomParameters({
 const database = getDatabase(app);
 
 export const login = () => {
-  return signInWithPopup(auth, provider).catch(console.error);
+  signInWithPopup(auth, provider).catch(console.error);
 };
 
 export const logout = () => {
-  return signOut(auth);
+  signOut(auth).catch(console.error);
 };
 
 export const onUserStateChange = (callback) => {
