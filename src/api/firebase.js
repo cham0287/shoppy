@@ -32,7 +32,7 @@ export const logout = () => {
   return signOut(auth);
 };
 
-export const onUserStateChanged = (callback) => {
+export const onUserStateChange = (callback) => {
   onAuthStateChanged(auth, async (user) => {
     const updatedUser = user ? await adminUser(user) : null;
     callback(updatedUser);
