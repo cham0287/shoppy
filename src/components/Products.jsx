@@ -9,7 +9,6 @@ const Products = () => {
     error,
     data: products,
   } = useQuery(['products'], () => getProducts());
-  console.log(products);
   return (
     <>
       {isLoading && <p>Loading...</p>}
