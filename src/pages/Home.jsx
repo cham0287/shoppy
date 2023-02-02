@@ -1,7 +1,12 @@
 import React from 'react';
+import Products from '../components/Products';
 
 const Home = () => {
-  return <div>홈화면</div>;
+  return (
+    <div>
+      <Products />
+    </div>
+  );
 };
 
 export default Home;
