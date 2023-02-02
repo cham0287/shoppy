@@ -6,6 +6,8 @@ import Button from '../components/ui/Button';
 const NewProduct = () => {
   const [product, setProduct] = useState({});
   const [file, setFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [success, setSuccess] = useState();
   const handleChange = (e) => {
     const { value, name, files } = e.target;
     if (name === 'file') {
@@ -16,36 +18,42 @@ const NewProduct = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    uploadImage(file).then((url) => {
-      addNewProduct(product, url);
-    });
+    setIsUploading(true);
+    uploadImage(file) //
+      .then((url) => {
+        addNewProduct(product, url) //
+          .then(() => {
+            setSuccess('성공적으로 제품이 추가되었습니다');
+          });
+        setTimeout(() => {
+          setSuccess(null);
+          setFile(null);
+          setProduct({});
+        }, 5000);
+      })
+      .finally(() => setIsUploading(false));
   };
   return (
-    <div className='flex flex-col items-center '>
+    <section className='w-full text-center'>
       <h1 className='text-3xl text-semibold p-4'>새로운 제품 등록</h1>
+      {success && <p className='my-2'>✅{success}</p>}
       {file && (
         <img
-          className='p-4'
+          className='w-96 mx-auto mb-2'
           src={URL.createObjectURL(file)}
           alt='selected file'
         />
       )}
 
-      <form
-        className='flex flex-col items-center w-4/5 gap-2'
-        onSubmit={handleSubmit}
-      >
+      <form className='flex flex-col px-12' onSubmit={handleSubmit}>
         <input
-          className='border p-2 w-full'
           type='file'
           accept='image/*'
           name='file'
           required
           onChange={handleChange}
         />
-
         <input
-          className='border p-2 w-full'
           type='text'
           name='title'
           placeholder='제품명'
@@ -54,7 +62,6 @@ const NewProduct = () => {
           onChange={handleChange}
         />
         <input
-          className='border p-2 w-full'
           type='text'
           name='price'
           placeholder='가격'
@@ -63,7 +70,6 @@ const NewProduct = () => {
           onChange={handleChange}
         />
         <input
-          className='border p-2 w-full'
           type='text'
           name='category'
           placeholder='카테고리'
@@ -72,7 +78,6 @@ const NewProduct = () => {
           onChange={handleChange}
         />
         <input
-          className='border p-2 w-full'
           type='text'
           name='description'
           placeholder='제품 설명'
@@ -81,7 +86,6 @@ const NewProduct = () => {
           onChange={handleChange}
         />
         <input
-          className='border p-2 w-full'
           type='text'
           name='options'
           placeholder='옵션들(콤마(,)로 구분)'
@@ -89,12 +93,12 @@ const NewProduct = () => {
           required
           onChange={handleChange}
         />
-        <Button text='제품 등록하기' />
-        <button className='border p-2 w-full bg-brand text-white'>
-          제품 등록하기
-        </button>
+        <Button
+          text={isUploading ? '업로드중...' : '제품 등록하기'}
+          disabled={isUploading}
+        />
       </form>
-    </div>
+    </section>
   );
 };
 
