@@ -14,7 +14,7 @@ const Products = () => {
     <>
       {isLoading && <p>Loading...</p>}
       {error && <p>{error}</p>}
-      <ul className='grid grid-cols-3 '>
+      <ul className='grid grid-cols-1 md:grid-cols-3 '>
         {products &&
           products.map((product) => <ProductCard product={product} />)}
       </ul>
