@@ -1,7 +1,12 @@
 import React from 'react';
+import Products from '../components/Products';
 
 const AllProducts = () => {
-  return <div>전체제품</div>;
+  return (
+    <div>
+      <Products />
+    </div>
+  );
 };
 
 export default AllProducts;
