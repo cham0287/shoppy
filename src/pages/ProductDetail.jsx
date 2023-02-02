@@ -1,14 +1,42 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { addOrUpdateCart } from '../api/firebase';
+import { useAuthContext } from '../components/context/AuthContext';
 import Button from '../components/ui/Button';
 
 const ProductDetail = () => {
-  const { id, image, title, description, category, price, options } =
-    useLocation().state.product;
-  const [selected, setSelected] = useState(options && options[0]);
-  const handleSelect = (e) => setSelected(e.target.value);
-  const handleClick = (e) => {
-    // 장바구니에 추가하기
+  const { product } = useLocation().state;
+  const { user } = useAuthContext();
+  const { id, image, title, description, category, price, options } = product;
+  const [cartProduct, setCartProduct] = useState({
+    ...product,
+    options: options[0],
+    checked: true,
+    quantity: 1,
+  });
+  const [isAdded, setIsAdded] = useState(false);
+  const handleSelect = (e) =>
+    setCartProduct((prev) => ({
+      ...prev,
+      options: e.target.value,
+    }));
+
+  const handleChangeCount = (e) => {
+    if (e.target.value < 1) return;
+    setCartProduct((prev) => ({
+      ...prev,
+      quantity: e.target.value,
+    }));
+  };
+
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    addOrUpdateCart(user.uid, cartProduct).then(() => {
+      setIsAdded(true);
+      setTimeout(() => {
+        setIsAdded(false);
+      }, 4000);
+    });
   };
   return (
     <div className='flex flex-col items-center'>
@@ -28,14 +56,27 @@ const ProductDetail = () => {
             <select
               id='select'
               onChange={handleSelect}
-              className='border-brand flex-1  border-4 border-dashed outline-none p-2 my-4'
+              className='border-brand flex-1  border-4 border-dashed outline-none p-2 m-2'
             >
               {options.map((option, index) => (
                 <option key={index}>{option}</option>
               ))}
             </select>
           </div>
-          <Button text='장바구니에 추가' onClick={handleClick} />
+          <div className='flex items-center'>
+            <label className='text-brand font-bold' htmlFor='count'>
+              갯수:
+            </label>
+            <input
+              value={cartProduct.quantity}
+              className='flex-1 p-2 m-2'
+              type='number'
+              id='count'
+              onChange={handleChangeCount}
+            />
+          </div>
+          {isAdded && <p>✅장바구니에 추가되었습니다</p>}
+          <Button text='장바구니에 추가' onClick={handleAddToCart} />
         </div>
       </div>
     </div>

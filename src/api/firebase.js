@@ -6,7 +6,7 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
 } from 'firebase/auth';
-import { getDatabase, ref, set, get } from 'firebase/database';
+import { getDatabase, ref, set, get, remove } from 'firebase/database';
 import { v4 as uuid } from 'uuid';
 
 const firebaseConfig = {
@@ -70,4 +70,39 @@ export const getProducts = async () => {
       }
       return [];
     });
+};
+export const getCart = async (userId) => {
+  return get(ref(database, `cart/${userId}`)) //
+    .then((snapshot) => {
+      const items = snapshot.val() || {};
+      return Object.values(items);
+    });
+};
+
+export const addOrUpdateCart = async (userId, product) => {
+  return set(
+    ref(database, `cart/${userId}/${product.id + product.options}`),
+    product
+  );
+};
+
+export const changeCartItemQuantity = async (userId, product, quantity) => {
+  return set(
+    ref(database, `cart/${userId}/${product.id + product.options}/quantity`),
+    quantity
+  );
+};
+export const changeItemChecked = async (userId, product, checked) => {
+  return set(
+    ref(database, `cart/${userId}/${product.id + product.options}/checked`),
+    checked
+  );
+};
+
+export const removeFromCart = async (userId, productId) => {
+  return remove(ref(database, `cart/${userId}/${productId}`));
+};
+
+export const removeAllCart = async (userId) => {
+  return remove(ref(database, `cart/${userId}`));
 };
