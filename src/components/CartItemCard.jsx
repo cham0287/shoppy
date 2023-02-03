@@ -1,25 +1,28 @@
 import React, { useState } from 'react';
 import { BsFillTrashFill } from 'react-icons/bs';
+import { AiOutlineMinusSquare, AiOutlinePlusSquare } from 'react-icons/ai';
 import {
-  changeCartItemQuantity,
+  addOrUpdateCart,
   changeItemChecked,
   removeFromCart,
 } from '../api/firebase';
-import { useAuthContext } from './context/AuthContext';
 
-const CartItemCard = ({ item, refetch }) => {
-  const {
-    user: { uid },
-  } = useAuthContext();
-  const [count, setCount] = useState(Number(item.quantity));
+const ICON_CLASS =
+  'transition-all cursor-pointer hover:text-brand hover:scale-110 mx-1';
+
+const CartItemCard = ({
+  item,
+  item: { id, image, options, title, price, quantity },
+  refetch,
+}) => {
+  const uid = localStorage.getItem('user');
   const [checked, setChecked] = useState(item.checked);
-  const handleChangeQuantity = (e) => {
-    if (e.target.value < 1) return;
-    setCount(() => {
-      changeCartItemQuantity(uid, item, e.target.value);
-      refetch();
-      return e.target.value;
-    });
+  const handleMinus = () => {
+    if (quantity < 2) return;
+    addOrUpdateCart(uid, { ...item, quantity: quantity - 1 });
+  };
+  const handlePlus = () => {
+    addOrUpdateCart(uid, { ...item, quantity: quantity + 1 });
   };
   const handleClickCheck = () => {
     setChecked((prev) => {
@@ -29,13 +32,17 @@ const CartItemCard = ({ item, refetch }) => {
     });
   };
   const handleRemove = () => {
-    removeFromCart(uid, item.id + item.options);
+    removeFromCart(uid, id + options);
     refetch();
   };
   return (
-    <li className='flex my-2'>
-      <div className='basis-2/12'>
-        <img src={item.image} alt={item.title} />
+    <li className='flex my-2 justify-between items-center'>
+      <div className='basis-2/12 '>
+        <img
+          className='w-24 md:w-72 rounded-lg shrink-0'
+          src={image}
+          alt={title}
+        />
       </div>
       <div className='basis-8/12 p-4 flex flex-col justify-center'>
         <div className='flex'>
@@ -45,22 +52,21 @@ const CartItemCard = ({ item, refetch }) => {
             <p>상품가격: </p>
           </div>
           <div>
-            <p> {item.title}</p>
-            <p> {item.options}</p>
-            <p> ₩{item.price}</p>
+            <p> {title}</p>
+            <p> {options}</p>
+            <p> ₩{price}</p>
           </div>
         </div>
       </div>
       <div className='basais-2/12 flex items-center'>
-        <button>-</button>
-        <input
-          type='number'
-          className='h-12 w-20'
-          value={count}
-          onChange={handleChangeQuantity}
-        />
-        <button>+</button>
-        <button onClick={handleRemove}>
+        <button onClick={handleMinus}>
+          <AiOutlineMinusSquare className={ICON_CLASS} />
+        </button>
+        <span>{quantity}</span>
+        <button onClick={handlePlus} className={ICON_CLASS}>
+          <AiOutlinePlusSquare />
+        </button>
+        <button onClick={handleRemove} className={ICON_CLASS}>
           <BsFillTrashFill />
         </button>
         <input type='radio' checked={checked} onClick={handleClickCheck} />

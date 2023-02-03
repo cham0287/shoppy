@@ -59,7 +59,7 @@ export const isAdminUser = async (uid) => {
     .then((snapshot) => {
       if (snapshot.exists()) {
         const admins = snapshot.val();
-        const isAdmin = admins.includes(user.uid);
+        const isAdmin = admins.includes(uid);
         return isAdmin;
       }
       return false;
@@ -101,12 +101,6 @@ export const addOrUpdateCart = async (userId, product) => {
   );
 };
 
-export const changeCartItemQuantity = async (userId, product, quantity) => {
-  return set(
-    ref(database, `cart/${userId}/${product.id + product.options}/quantity`),
-    quantity
-  );
-};
 export const changeItemChecked = async (userId, product, checked) => {
   return set(
     ref(database, `cart/${userId}/${product.id + product.options}/checked`),

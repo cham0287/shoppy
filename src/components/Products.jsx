@@ -1,21 +1,20 @@
 import React from 'react';
-import { getProducts } from '../api/firebase';
-import { useQuery } from '@tanstack/react-query';
 import ProductCard from './ProductCard';
+import useProducts from '../hooks/useProducts';
 
 const Products = () => {
   const {
-    isLoading,
-    error,
-    data: products,
-  } = useQuery(['products'], () => getProducts());
+    productsQuery: { isLoading, error, data: products },
+  } = useProducts();
   return (
     <>
       {isLoading && <p>Loading...</p>}
       {error && <p>{error}</p>}
       <ul className='grid grid-cols-1 md:grid-cols-3 '>
         {products &&
-          products.map((product) => <ProductCard product={product} />)}
+          products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
       </ul>
     </>
   );

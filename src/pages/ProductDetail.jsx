@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { addOrUpdateCart } from '../api/firebase';
-import { useAuthContext } from '../components/context/AuthContext';
+import { useAuthContext } from '../context/AuthContext';
 import Button from '../components/ui/Button';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 const ProductDetail = () => {
   const { product } = useLocation().state;
-  const { user } = useAuthContext();
+  const { user, uid } = useAuthContext();
   const { id, image, title, description, category, price, options } = product;
   const [cartProduct, setCartProduct] = useState({
     ...product,
@@ -15,6 +16,12 @@ const ProductDetail = () => {
     quantity: 1,
   });
   const [isAdded, setIsAdded] = useState(false);
+  const queryClient = useQueryClient();
+  const addCart = useMutation(
+    ({ uid, cartProduct }) => addOrUpdateCart(uid, cartProduct),
+    { onSuccess: () => queryClient.invalidateQueries(['cart']) }
+  );
+
   const handleSelect = (e) =>
     setCartProduct((prev) => ({
       ...prev,
@@ -31,12 +38,17 @@ const ProductDetail = () => {
 
   const handleAddToCart = (e) => {
     e.preventDefault();
-    addOrUpdateCart(user.uid, cartProduct).then(() => {
-      setIsAdded(true);
-      setTimeout(() => {
-        setIsAdded(false);
-      }, 4000);
-    });
+    addCart.mutate(
+      { uid, cartProduct },
+      {
+        onSuccess: () => {
+          setIsAdded(true);
+          setTimeout(() => {
+            setIsAdded(false);
+          }, 4000);
+        },
+      }
+    );
   };
   return (
     <div className='flex flex-col items-center'>
