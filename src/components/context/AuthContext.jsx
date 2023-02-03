@@ -6,7 +6,10 @@ const AuthContext = createContext();
 export function AuthContextProvider({ children }) {
   const [user, setUser] = useState();
   useEffect(() => {
-    onUserStateChange((user) => setUser(user));
+    onUserStateChange((user) => {
+      setUser(user);
+      localStorage.setItem('user', user.uid);
+    });
   }, []);
 
   return (

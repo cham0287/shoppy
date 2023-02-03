@@ -29,7 +29,11 @@ export const login = () => {
 };
 
 export const logout = () => {
-  signOut(auth).catch(console.error);
+  signOut(auth)
+    .then(() => {
+      localStorage.setItem('user', '');
+    })
+    .catch(console.error);
 };
 
 export const onUserStateChange = (callback) => {
@@ -48,6 +52,17 @@ const adminUser = async (user) => {
         return { ...user, isAdmin };
       }
       return user;
+    });
+};
+export const isAdminUser = async (uid) => {
+  return get(ref(database, 'admins')) //
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        const admins = snapshot.val();
+        const isAdmin = admins.includes(user.uid);
+        return isAdmin;
+      }
+      return false;
     });
 };
 

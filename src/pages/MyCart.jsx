@@ -1,15 +1,12 @@
 import React from 'react';
 import { getCart, removeAllCart } from '../api/firebase';
-import { useAuthContext } from '../components/context/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import CartItemCard from '../components/CartItemCard';
 import Payment from '../components/Payment';
 import Button from '../components/ui/Button';
 
 const MyCart = () => {
-  const {
-    user: { uid },
-  } = useAuthContext();
+  const uid = localStorage.getItem('user');
   const {
     isLoading,
     error,

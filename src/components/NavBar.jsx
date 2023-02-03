@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiShoppingBag } from 'react-icons/fi';
 import { BsFillPencilFill } from 'react-icons/bs';
@@ -12,7 +12,6 @@ import { useQuery } from '@tanstack/react-query';
 const NavBar = () => {
   const { user, login, logout } = useAuthContext();
   const { data: items } = useQuery(['cart'], () => getCart(uid));
-  console.log(items.length);
   return (
     <header className='flex justify-between p-2 border-b border-gray-300'>
       <Link to='/' className='flex text-4xl items-center text-brand'>
@@ -23,9 +22,11 @@ const NavBar = () => {
         <Link to='/products'>Products</Link>
         {user && (
           <Link to='/carts' className='text-3xl relative'>
-            <div className='bg-brand rounded-full text-xs absolute w-4 h-4 text-center left-5'>
-              {items.length}
-            </div>
+            {items && (
+              <div className='bg-brand rounded-full text-xs absolute w-4 h-4 text-center left-5'>
+                {items.length}
+              </div>
+            )}
             <AiOutlineShoppingCart />
           </Link>
         )}
