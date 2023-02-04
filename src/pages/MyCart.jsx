@@ -1,18 +1,15 @@
 import React from 'react';
-import { getCart, removeAllCart } from '../api/firebase';
-import { useQuery } from '@tanstack/react-query';
+import { removeAllCart } from '../api/firebase';
 import CartItemCard from '../components/CartItemCard';
 import Payment from '../components/Payment';
 import Button from '../components/ui/Button';
+import useCart from '../hooks/useCart';
 
 const MyCart = () => {
   const uid = localStorage.getItem('user');
   const {
-    isLoading,
-    error,
-    refetch,
-    data: items,
-  } = useQuery(['cart'], () => getCart(uid));
+    cartQuery: { isLoading, error, data: items },
+  } = useCart();
 
   const handleRemoveAll = () => {
     if (confirm('장바구니를 비우시겠습니까?')) removeAllCart(uid), refetch();
@@ -35,9 +32,7 @@ const MyCart = () => {
               </button>
             </li>
             {items &&
-              items.map((item) => (
-                <CartItemCard key={item.id} item={item} refetch={refetch} />
-              ))}
+              items.map((item) => <CartItemCard key={item.id} item={item} />)}
           </ul>
           <Payment items={items} />
         </>

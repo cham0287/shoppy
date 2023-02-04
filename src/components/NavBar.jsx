@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiShoppingBag } from 'react-icons/fi';
 import { BsFillPencilFill } from 'react-icons/bs';
@@ -6,13 +6,14 @@ import { AiOutlineShoppingCart } from 'react-icons/ai';
 import User from './User';
 import Button from './ui/Button';
 import { useAuthContext } from '../context/AuthContext';
-import { getCart } from '../api/firebase';
-import { useQuery } from '@tanstack/react-query';
+import useCart from '../hooks/useCart';
 
 const NavBar = () => {
   const { user, login, logout } = useAuthContext();
   const uid = localStorage.getItem('user');
-  const { data: items } = useQuery(['cart'], () => getCart(uid));
+  const {
+    cartQuery: { data: items },
+  } = useCart();
 
   return (
     <header className='flex justify-between p-2 border-b border-gray-300'>

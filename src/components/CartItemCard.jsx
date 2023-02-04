@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { BsFillTrashFill } from 'react-icons/bs';
 import { AiOutlineMinusSquare, AiOutlinePlusSquare } from 'react-icons/ai';
-import {
-  addOrUpdateCart,
-  changeItemChecked,
-  removeFromCart,
-} from '../api/firebase';
+import useCart from '../hooks/useCart';
 
 const ICON_CLASS =
   'transition-all cursor-pointer hover:text-brand hover:scale-110 mx-1';
@@ -13,28 +9,23 @@ const ICON_CLASS =
 const CartItemCard = ({
   item,
   item: { id, image, options, title, price, quantity },
-  refetch,
 }) => {
-  const uid = localStorage.getItem('user');
   const [checked, setChecked] = useState(item.checked);
+  const { addOrUpdateCartItem, removeItem } = useCart();
   const handleMinus = () => {
     if (quantity < 2) return;
-    addOrUpdateCart(uid, { ...item, quantity: quantity - 1 });
+    addOrUpdateCartItem.mutate({ ...item, quantity: quantity - 1 });
   };
   const handlePlus = () => {
-    addOrUpdateCart(uid, { ...item, quantity: quantity + 1 });
+    addOrUpdateCartItem.mutate({ ...item, quantity: quantity + 1 });
   };
   const handleClickCheck = () => {
     setChecked((prev) => {
-      changeItemChecked(uid, item, !prev);
-      refetch();
+      addOrUpdateCartItem.mutate({ ...item, checked: !prev });
       return !prev;
     });
   };
-  const handleRemove = () => {
-    removeFromCart(uid, id + options);
-    refetch();
-  };
+  const handleRemove = () => removeItem.mutate(id + options);
   return (
     <li className='flex my-2 justify-between items-center'>
       <div className='basis-2/12 '>
